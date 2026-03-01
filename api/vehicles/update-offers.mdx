@@ -1,0 +1,81 @@
+---
+title: "Update Vehicle Offers"
+api: "PATCH /api/vehicles/{id}/offers"
+description: "Update promotional offers for a specific vehicle"
+---
+
+## Request
+
+<ParamField path="id" type="Long" required>
+  The unique identifier of the vehicle
+</ParamField>
+
+### Request Body
+
+<ParamField body="offers" type="string" required>
+  The promotional offer text to set for the vehicle
+</ParamField>
+
+## Response
+
+Returns `200 OK` on success.
+
+## Example
+
+<CodeGroup>
+```bash cURL
+curl -X PATCH "http://localhost:8080/api/vehicles/1/offers" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "offers": "20% off for weekend rentals"
+  }'
+```
+
+```java Java
+// From VehicleController.java:132-142
+@PatchMapping("/{id}/offers")
+public ResponseEntity<?> updateOffers(
+        @PathVariable Long id,
+        @RequestBody Map<String, String> body) {
+    
+    String offers = body.get("offers");
+    service.updateOffers(id, offers);
+    
+    return ResponseEntity.ok().build();
+}
+```
+</CodeGroup>
+
+### Request Example
+
+```json
+{
+  "offers": "Free upgrade on 7+ day rentals"
+}
+```
+
+### Response
+
+```
+200 OK
+```
+
+<Note>
+  This is a PATCH endpoint that only updates the `offers` field. Other vehicle fields remain unchanged.
+</Note>
+
+## Use Cases
+
+- Setting promotional offers for specific vehicles
+- Updating seasonal discounts
+- Clearing offers by setting to empty string or null
+- Managing special pricing campaigns
+
+<Tip>
+  To retrieve all vehicles with active offers, use the `GET /api/vehicles/offers` endpoint.
+</Tip>
+
+## Related Endpoints
+
+- [Get Vehicles with Offers](/api/vehicles/get-offers) - Retrieve all vehicles with active promotions
+- [Update Vehicle](/api/vehicles/update-vehicle) - Update all vehicle fields including offers

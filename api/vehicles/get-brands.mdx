@@ -1,0 +1,98 @@
+---
+title: "Get Available Brands"
+api: "GET /api/vehicles/brands"
+description: "Retrieve a list of all supported vehicle brands"
+---
+
+## Request
+
+This endpoint requires no parameters.
+
+## Response
+
+Returns an array of all available vehicle brands, sorted alphabetically.
+
+<ResponseField name="brands" type="Brand[]">
+  Array of brand enum values
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+```bash cURL
+curl -X GET "http://localhost:8080/api/vehicles/brands"
+```
+
+```java Java
+// From VehicleController.java:101-106
+@GetMapping("/brands")
+public Brand[] getBrands() {
+    return Arrays.stream(Brand.values())
+            .sorted(Comparator.comparing(Enum::name))
+            .toArray(Brand[]::new);
+}
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+[
+  "ACURA",
+  "ALFA_ROMEO",
+  "ASTON_MARTIN",
+  "AUDI",
+  "BENTLEY",
+  "BMW",
+  "BUGATTI",
+  "CADILLAC",
+  "CHEVROLET",
+  "CHRYSLER",
+  "DODGE",
+  "FERRARI",
+  "FIAT",
+  "FORD",
+  "GENESIS",
+  "GMC",
+  "HONDA",
+  "HYUNDAI",
+  "INFINITI",
+  "JAGUAR",
+  "JEEP",
+  "KIA",
+  "LAMBORGHINI",
+  "LAND_ROVER",
+  "LEXUS",
+  "LINCOLN",
+  "MASERATI",
+  "MAZDA",
+  "MCLAREN",
+  "MERCEDES_BENZ",
+  "MINI",
+  "MITSUBISHI",
+  "NISSAN",
+  "PORSCHE",
+  "RAM",
+  "ROLLS_ROYCE",
+  "SUBARU",
+  "TESLA",
+  "TOYOTA",
+  "VOLKSWAGEN",
+  "VOLVO"
+]
+```
+
+<Info>
+  The Brand enum is defined in the source code and contains over 100 supported vehicle manufacturers. Use this endpoint to populate brand selection dropdowns in your UI.
+</Info>
+
+## Usage
+
+This endpoint is useful for:
+- Populating brand filter dropdowns in vehicle search interfaces
+- Validating brand input before creating/updating vehicles
+- Displaying all available manufacturers to users
+
+<Tip>
+  Brand values are returned in UPPERCASE with underscores (e.g., MERCEDES_BENZ). When filtering vehicles by brand, use these exact values.
+</Tip>

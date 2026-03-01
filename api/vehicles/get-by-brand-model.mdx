@@ -1,0 +1,64 @@
+---
+title: "Get Vehicles by Brand and Model"
+api: "GET /api/vehicles/brandmodel"
+description: "Retrieve vehicles matching both brand and model"
+---
+
+## Request
+
+<ParamField query="brand" type="string" required>
+  The brand name to filter by
+</ParamField>
+
+<ParamField query="model" type="string" required>
+  The model name to filter by
+</ParamField>
+
+## Response
+
+Returns an array of vehicles matching both the specified brand and model.
+
+<ResponseField name="vehicles" type="Vehicle[]">
+  Array of vehicle objects
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+```bash cURL
+curl -X GET "http://localhost:8080/api/vehicles/brandmodel?brand=BMW&model=X5"
+```
+
+```java Java
+// From VehicleController.java:81-84
+@GetMapping("/brandmodel")
+public List<Vehicle> searchBrandModel(
+    @RequestParam String brand, 
+    @RequestParam String model) {
+    return service.findByBrandAndModel(brand, model);
+}
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "reference": "BMW2024A1B2",
+    "brand": "BMW",
+    "model": "X5",
+    "year": 2024,
+    "price": 150.00,
+    "vehicleType": "SUV",
+    "hp": 340,
+    "fuelType": "Gasoline",
+    "doors": 5
+  }
+]
+```
+
+<Info>
+  Both parameters are required. This endpoint performs exact matching on both brand and model fields.
+</Info>

@@ -10,7 +10,7 @@ Authenticates a user by validating their email and password credentials. Returns
 ## Endpoint
 
 ```
-POST /auth/login
+POST /api/auth/login
 ```
 
 ## Request Body
@@ -88,7 +88,7 @@ Returned when the email does not exist or the password is incorrect. No response
 ### Request
 
 ```bash
-curl -X POST https://api.drivex.com/auth/login \
+curl -X POST http://localhost:8080/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "email": "user@example.com",

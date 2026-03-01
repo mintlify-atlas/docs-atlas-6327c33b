@@ -68,7 +68,15 @@
               "api/vehicles/update-vehicle",
               "api/vehicles/delete-vehicle",
               "api/vehicles/search-vehicles",
-              "api/vehicles/filter-vehicles"
+              "api/vehicles/filter-vehicles",
+              "api/vehicles/get-by-brand",
+              "api/vehicles/get-by-brand-model",
+              "api/vehicles/get-by-year",
+              "api/vehicles/get-by-year-range",
+              "api/vehicles/get-by-type",
+              "api/vehicles/get-brands",
+              "api/vehicles/get-offers",
+              "api/vehicles/update-offers"
             ]
           },
           {

@@ -1,0 +1,68 @@
+---
+title: "Get Vehicles with Offers"
+api: "GET /api/vehicles/offers"
+description: "Retrieve all vehicles that have active promotional offers"
+---
+
+## Request
+
+This endpoint requires no parameters.
+
+## Response
+
+Returns an array of vehicles that have offers defined (non-null `offers` field).
+
+<ResponseField name="vehicles" type="Vehicle[]">
+  Array of vehicle objects with active offers
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+```bash cURL
+curl -X GET "http://localhost:8080/api/vehicles/offers"
+```
+
+```java Java
+// From VehicleController.java:126-129
+@GetMapping("/offers")
+public List<Vehicle> findByOffers() {
+    return service.findByOffers();
+}
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "reference": "BMW2024A1B2",
+    "brand": "BMW",
+    "model": "X5",
+    "year": 2024,
+    "price": 150.00,
+    "vehicleType": "SUV",
+    "offers": "20% off for weekend rentals"
+  },
+  {
+    "id": 5,
+    "reference": "AUD2024C3D4",
+    "brand": "Audi",
+    "model": "Q7",
+    "year": 2024,
+    "price": 145.00,
+    "vehicleType": "SUV",
+    "offers": "Free upgrade on 7+ day rentals"
+  }
+]
+```
+
+<Info>
+  This endpoint filters vehicles where the `offers` field is not null. To update offers for a vehicle, use the `PATCH /api/vehicles/{id}/offers` endpoint.
+</Info>
+
+## Related Endpoints
+
+- [Update Vehicle Offers](/api/vehicles/update-offers) - Set or update promotional offers for a vehicle

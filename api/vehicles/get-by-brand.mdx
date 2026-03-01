@@ -1,0 +1,138 @@
+---
+title: "Get Vehicles by Brand"
+api: "GET /api/vehicles/brand"
+description: "Retrieve all vehicles from a specific brand"
+---
+
+## Request
+
+<ParamField query="brand" type="string" required>
+  The brand name to filter vehicles by
+</ParamField>
+
+## Response
+
+<ResponseField name="vehicles" type="Vehicle[]">
+  Array of vehicle objects matching the specified brand
+</ResponseField>
+
+### Vehicle Object
+
+<ResponseField name="id" type="Long">
+  Unique identifier for the vehicle
+</ResponseField>
+
+<ResponseField name="reference" type="string">
+  Auto-generated reference code (e.g., BMW2024A1B2)
+</ResponseField>
+
+<ResponseField name="brand" type="string">
+  Vehicle manufacturer brand
+</ResponseField>
+
+<ResponseField name="model" type="string">
+  Vehicle model name
+</ResponseField>
+
+<ResponseField name="year" type="integer">
+  Manufacturing year
+</ResponseField>
+
+<ResponseField name="price" type="BigDecimal">
+  Daily rental price
+</ResponseField>
+
+<ResponseField name="vehicleType" type="string">
+  Type of vehicle (e.g., SUV, Sedan, Coupe)
+</ResponseField>
+
+<ResponseField name="hp" type="integer">
+  Horsepower
+</ResponseField>
+
+<ResponseField name="autonomy" type="integer">
+  Autonomy in kilometers (for electric vehicles)
+</ResponseField>
+
+<ResponseField name="averageconsumption" type="double">
+  Average fuel consumption
+</ResponseField>
+
+<ResponseField name="fuelType" type="string">
+  Type of fuel (e.g., Gasoline, Diesel, Electric)
+</ResponseField>
+
+<ResponseField name="mileage" type="Long">
+  Current vehicle mileage
+</ResponseField>
+
+<ResponseField name="doors" type="integer">
+  Number of doors
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Vehicle description
+</ResponseField>
+
+<ResponseField name="extras" type="string">
+  Additional features and equipment
+</ResponseField>
+
+<ResponseField name="offers" type="string">
+  Current promotional offers
+</ResponseField>
+
+<ResponseField name="images" type="VehicleImage[]">
+  Array of vehicle images (OneToMany relationship)
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+```bash cURL
+curl -X GET "http://localhost:8080/api/vehicles/brand?brand=BMW"
+```
+
+```java Java
+// From VehicleController.java:76-79
+@GetMapping("/brand")
+public List<Vehicle> searchBrand(@RequestParam String brand) {
+    return service.findByBrand(brand);
+}
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "reference": "BMW2024A1B2",
+    "brand": "BMW",
+    "model": "X5",
+    "year": 2024,
+    "price": 150.00,
+    "vehicleType": "SUV",
+    "hp": 340,
+    "fuelType": "Gasoline",
+    "doors": 5
+  },
+  {
+    "id": 2,
+    "reference": "BMW2023C4D5",
+    "brand": "BMW",
+    "model": "M3",
+    "year": 2023,
+    "price": 180.00,
+    "vehicleType": "Sedan",
+    "hp": 503,
+    "fuelType": "Gasoline",
+    "doors": 4
+  }
+]
+```
+
+<Note>
+  This endpoint filters vehicles by exact brand match. Use `/api/vehicles/search?q={query}` for partial matching across both brand and model.
+</Note>

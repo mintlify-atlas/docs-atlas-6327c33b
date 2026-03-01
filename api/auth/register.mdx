@@ -10,7 +10,7 @@ Creates a new user account in the DriveX system. The password is automatically h
 ## Endpoint
 
 ```
-POST /auth/register
+POST /api/auth/register
 ```
 
 ## Request Body
@@ -120,7 +120,7 @@ Returned when the email address is already registered in the system.
 ### Request
 
 ```bash
-curl -X POST https://api.drivex.com/auth/register \
+curl -X POST http://localhost:8080/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "johndoe",

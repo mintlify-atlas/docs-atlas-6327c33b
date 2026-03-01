@@ -1,0 +1,83 @@
+---
+title: "Get Vehicles by Year Range"
+api: "GET /api/vehicles/year-range"
+description: "Retrieve vehicles within a specified year range"
+---
+
+## Request
+
+<ParamField query="startYear" type="integer" required>
+  The starting year of the range (inclusive)
+</ParamField>
+
+<ParamField query="endYear" type="integer" required>
+  The ending year of the range (inclusive)
+</ParamField>
+
+## Response
+
+Returns an array of vehicles with manufacturing years between startYear and endYear (inclusive).
+
+<ResponseField name="vehicles" type="Vehicle[]">
+  Array of vehicle objects
+</ResponseField>
+
+## Example
+
+<CodeGroup>
+```bash cURL
+curl -X GET "http://localhost:8080/api/vehicles/year-range?startYear=2022&endYear=2024"
+```
+
+```java Java
+// From VehicleController.java:109-114
+@GetMapping("/year-range")
+public List<Vehicle> findByYearRange(
+        @RequestParam Integer startYear,
+        @RequestParam Integer endYear) {
+    return service.findByYearBetween(startYear, endYear);
+}
+```
+</CodeGroup>
+
+### Response Example
+
+```json
+[
+  {
+    "id": 1,
+    "reference": "BMW2024A1B2",
+    "brand": "BMW",
+    "model": "X5",
+    "year": 2024,
+    "price": 150.00,
+    "vehicleType": "SUV"
+  },
+  {
+    "id": 2,
+    "reference": "AUD2023C3D4",
+    "brand": "Audi",
+    "model": "Q7",
+    "year": 2023,
+    "price": 145.00,
+    "vehicleType": "SUV"
+  },
+  {
+    "id": 3,
+    "reference": "MER2022E5F6",
+    "brand": "Mercedes-Benz",
+    "model": "GLE",
+    "year": 2022,
+    "price": 155.00,
+    "vehicleType": "SUV"
+  }
+]
+```
+
+<Note>
+  Both startYear and endYear are inclusive in the search. The query uses SQL BETWEEN clause internally.
+</Note>
+
+<Tip>
+  Use this endpoint to filter vehicles by model year ranges, such as "2020-2024" for recent models or "2015-2019" for older inventory.
+</Tip>
