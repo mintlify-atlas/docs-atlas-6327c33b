@@ -1,0 +1,137 @@
+{
+  "projectType": "api-service",
+  "projectName": "DriveX Backend",
+  "projectDescription": "RESTful API service for a vehicle rental platform built with Spring Boot",
+  "theme": "aspen",
+  "primaryColor": "#2563eb",
+  "lightColor": "#3b82f6",
+  "darkColor": "#1e40af",
+  "navigation": {
+    "tabs": [
+      {
+        "tab": "Documentation",
+        "groups": [
+          {
+            "group": "Get Started",
+            "pages": [
+              "introduction",
+              "quickstart",
+              "installation"
+            ]
+          },
+          {
+            "group": "Core Concepts",
+            "pages": [
+              "concepts/architecture",
+              "concepts/authentication",
+              "concepts/data-models"
+            ]
+          },
+          {
+            "group": "Guides",
+            "pages": [
+              "guides/configuration",
+              "guides/database-setup",
+              "guides/deployment"
+            ]
+          }
+        ]
+      },
+      {
+        "tab": "API Reference",
+        "groups": [
+          {
+            "group": "Authentication",
+            "pages": [
+              "api/auth/login",
+              "api/auth/register"
+            ]
+          },
+          {
+            "group": "Vehicles",
+            "pages": [
+              "api/vehicles/list-vehicles",
+              "api/vehicles/get-vehicle",
+              "api/vehicles/create-vehicle",
+              "api/vehicles/update-vehicle",
+              "api/vehicles/delete-vehicle",
+              "api/vehicles/search-vehicles",
+              "api/vehicles/filter-vehicles"
+            ]
+          },
+          {
+            "group": "Rentals",
+            "pages": [
+              "api/rentals/create-rental",
+              "api/rentals/get-rental",
+              "api/rentals/list-rentals",
+              "api/rentals/cancel-rental",
+              "api/rentals/complete-rental",
+              "api/rentals/check-availability"
+            ]
+          },
+          {
+            "group": "Users",
+            "pages": [
+              "api/users/list-users",
+              "api/users/get-user",
+              "api/users/create-user",
+              "api/users/update-user",
+              "api/users/delete-user",
+              "api/users/search-users"
+            ]
+          },
+          {
+            "group": "Favorites",
+            "pages": [
+              "api/favorites/get-favorites",
+              "api/favorites/add-favorite",
+              "api/favorites/remove-favorite"
+            ]
+          },
+          {
+            "group": "Vehicle Images",
+            "pages": [
+              "api/vehicle-images/overview"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "keyFeatures": [
+    "User authentication and authorization with password hashing",
+    "Complete vehicle catalog management with search and filtering",
+    "Rental booking system with availability checking",
+    "User favorites for saving preferred vehicles",
+    "Vehicle image management and storage",
+    "Multi-criteria vehicle search (brand, model, year, type)",
+    "Special offers and promotional pricing"
+  ],
+  "publicApiSurface": [
+    "POST /api/auth/login - User authentication",
+    "POST /api/auth/register - User registration",
+    "GET /api/vehicles - List all vehicles with optional filtering",
+    "GET /api/vehicles/{id} - Get vehicle details",
+    "POST /api/vehicles - Create new vehicle",
+    "PUT /api/vehicles/{id} - Update vehicle",
+    "DELETE /api/vehicles/{id} - Delete vehicle",
+    "GET /api/vehicles/search - Search vehicles by brand or model",
+    "GET /api/vehicles/filter - Filter vehicles by multiple criteria",
+    "GET /api/vehicles/brands - Get available vehicle brands",
+    "POST /api/rentals - Create rental booking",
+    "GET /api/rentals/{id} - Get rental details",
+    "GET /api/rentals - List rentals by user or vehicle",
+    "POST /api/rentals/{id}/cancel - Cancel rental",
+    "POST /api/rentals/{id}/complete - Complete rental",
+    "GET /api/rentals/availability - Check vehicle availability",
+    "GET /api/users - List all users",
+    "GET /api/users/{id} - Get user details",
+    "POST /api/users - Create user",
+    "PUT /api/users/{id} - Update user",
+    "DELETE /api/users/{id} - Delete user",
+    "GET /api/favourites/{userId} - Get user's favorite vehicles",
+    "POST /api/favourites/{userId}/{vehicleId} - Add vehicle to favorites",
+    "DELETE /api/favourites/{userId}/{vehicleId} - Remove vehicle from favorites"
+  ]
+}
