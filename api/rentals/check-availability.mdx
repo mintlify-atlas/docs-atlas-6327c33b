@@ -1,0 +1,51 @@
+---
+title: "Check Availability"
+api: "GET /api/rentals/availability"
+---
+
+Checks if a vehicle is available for rent during a specified date range. Returns `true` if the vehicle has no overlapping rentals, `false` otherwise.
+
+<Note>
+Dates must be provided in ISO 8601 format (YYYY-MM-DD). This endpoint checks for any existing rentals that would overlap with the requested period.
+</Note>
+
+## Query Parameters
+
+<ParamField query="vehicleId" type="long" required>
+  The ID of the vehicle to check availability for
+</ParamField>
+
+<ParamField query="start" type="string" required>
+  Start date in ISO 8601 format (YYYY-MM-DD)
+</ParamField>
+
+<ParamField query="end" type="string" required>
+  End date in ISO 8601 format (YYYY-MM-DD)
+</ParamField>
+
+## Response
+
+Returns a boolean value indicating availability.
+
+<RequestExample>
+```bash cURL
+curl -X GET "https://api.drivex.com/api/rentals/availability?vehicleId=456&start=2026-03-15&end=2026-03-20" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 Available
+true
+```
+
+```json 200 Not Available
+false
+```
+
+```json 400 Bad Request
+{
+  "error": "Invalid date format. Use YYYY-MM-DD"
+}
+```
+</ResponseExample>

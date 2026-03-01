@@ -1,0 +1,155 @@
+---
+title: "Vehicle Images"
+description: "Manage vehicle images including upload and retrieval"
+---
+
+## Overview
+
+The Vehicle Images API allows you to manage images associated with vehicles in the DriveX system. Each vehicle can have multiple images (up to 15), with one designated as the main/primary image.
+
+## Model Structure
+
+### VehicleImage
+
+The `VehicleImage` entity represents an image associated with a vehicle.
+
+<ResponseField name="id" type="Long">
+  Unique identifier for the vehicle image
+</ResponseField>
+
+<ResponseField name="vehicle" type="Vehicle">
+  The associated vehicle (ManyToOne relationship). This field is excluded from JSON responses to prevent circular references.
+</ResponseField>
+
+<ResponseField name="imageUrl" type="String">
+  URL or path to the image file
+</ResponseField>
+
+<ResponseField name="isMain" type="boolean" default="false">
+  Indicates whether this is the primary/main image for the vehicle
+</ResponseField>
+
+## Relationship with Vehicle
+
+Vehicle images use a **ManyToOne** relationship with the `Vehicle` entity:
+- Each `VehicleImage` belongs to exactly one `Vehicle`
+- Each `Vehicle` can have multiple `VehicleImage` records (OneToMany from Vehicle's perspective)
+- Maximum of 15 images per vehicle
+- The `vehicle` field in the response is excluded via `@JsonIgnore` to prevent circular serialization issues
+
+## Endpoints
+
+### Upload Vehicle Image
+
+<CodeGroup>
+```bash cURL
+curl -X POST /vehicles/{id}/images \
+  -H "Content-Type: application/json" \
+  -d '{
+    "imageUrl": "https://example.com/images/car1.jpg",
+    "isMain": true
+  }'
+```
+
+```java Java
+@PostMapping("/{id}/images")
+public VehicleImage uploadImage(
+    @PathVariable Long id,
+    @RequestBody VehicleImageRequest request)
+```
+</CodeGroup>
+
+Add a new image to a vehicle.
+
+**Path Parameters**
+
+<ParamField path="id" type="Long" required>
+  The ID of the vehicle to add the image to
+</ParamField>
+
+**Request Body**
+
+<ParamField body="imageUrl" type="String" required>
+  URL or path to the vehicle image
+</ParamField>
+
+<ParamField body="isMain" type="boolean" default="false">
+  Set to `true` to mark this as the primary image for the vehicle
+</ParamField>
+
+**Response**
+
+Returns the created `VehicleImage` object.
+
+<ResponseField name="id" type="Long">
+  ID of the newly created image record
+</ResponseField>
+
+<ResponseField name="imageUrl" type="String">
+  The URL of the uploaded image
+</ResponseField>
+
+<ResponseField name="isMain" type="boolean">
+  Whether this is the main image
+</ResponseField>
+
+**Validation**
+
+- Maximum of 15 images per vehicle
+- Vehicle must exist (returns error if not found)
+
+---
+
+### List Vehicle Images
+
+<CodeGroup>
+```bash cURL
+curl -X GET /vehicles/{id}/images
+```
+
+```java Java
+@GetMapping("/{id}/images")
+public List<VehicleImage> listImages(@PathVariable Long id)
+```
+</CodeGroup>
+
+Retrieve all images associated with a specific vehicle.
+
+**Path Parameters**
+
+<ParamField path="id" type="Long" required>
+  The ID of the vehicle whose images to retrieve
+</ParamField>
+
+**Response**
+
+Returns an array of `VehicleImage` objects.
+
+```json
+[
+  {
+    "id": 1,
+    "imageUrl": "https://example.com/images/car1-main.jpg",
+    "isMain": true
+  },
+  {
+    "id": 2,
+    "imageUrl": "https://example.com/images/car1-interior.jpg",
+    "isMain": false
+  }
+]
+```
+
+## Error Handling
+
+| Error | Description |
+|-------|-------------|
+| `IllegalStateException` | Thrown when attempting to add more than 15 images to a vehicle |
+| `RuntimeException` | Thrown when the specified vehicle ID does not exist |
+
+## Business Rules
+
+1. **Image Limit**: Each vehicle can have a maximum of 15 images
+2. **Main Image**: At least one image should typically be marked as `isMain: true` for display purposes
+3. **Vehicle Reference**: Images must be associated with an existing vehicle
+4. **Database Table**: Images are stored in the `vehicle_images` table

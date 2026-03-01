@@ -1,0 +1,39 @@
+---
+title: "Delete User"
+api: "DELETE /api/users/{id}"
+description: "Delete a user from the system"
+---
+
+## Overview
+
+This endpoint permanently deletes a user from the DriveX system. This operation cannot be undone.
+
+## Request
+
+<ParamField path="id" type="long" required>
+  The unique identifier of the user to delete
+</ParamField>
+
+```bash
+curl -X DELETE 'http://localhost:8080/api/users/1' \
+  -H 'Content-Type: application/json'
+```
+
+## Response
+
+Returns a `204 No Content` status code on successful deletion with no response body.
+
+## Example Response
+
+Successful deletion returns HTTP 204 with no content:
+
+```
+HTTP/1.1 204 No Content
+```
+
+## Notes
+
+- This operation is permanent and cannot be undone
+- The endpoint returns `204 No Content` regardless of whether the user existed
+- Consider implementing soft deletes (setting `is_active` to false) instead of hard deletes for better data retention
+- Related data (bookings, reviews, etc.) may need to be handled separately depending on your database constraints

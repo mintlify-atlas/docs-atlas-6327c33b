@@ -1,0 +1,149 @@
+---
+title: "Update User"
+api: "PUT /api/users/{id}"
+description: "Update an existing user's information"
+---
+
+## Overview
+
+This endpoint updates an existing user's information. The password is automatically hashed using BCrypt encryption if provided.
+
+## Request
+
+<ParamField path="id" type="long" required>
+  The unique identifier of the user to update
+</ParamField>
+
+<ParamField body="username" type="string">
+  Updated username for the user
+</ParamField>
+
+<ParamField body="email" type="string">
+  Updated email address
+</ParamField>
+
+<ParamField body="password_hash" type="string">
+  New password in plain text (will be encrypted automatically)
+</ParamField>
+
+<ParamField body="firstname" type="string">
+  Updated first name
+</ParamField>
+
+<ParamField body="lastname" type="string">
+  Updated last name
+</ParamField>
+
+<ParamField body="phone_number" type="string">
+  Updated phone number
+</ParamField>
+
+<ParamField body="role" type="string">
+  Updated role (e.g., ADMIN, USER, DRIVER)
+</ParamField>
+
+<ParamField body="is_active" type="boolean">
+  Updated active status
+</ParamField>
+
+<ParamField body="profileImage" type="string">
+  Updated profile image URL or path
+</ParamField>
+
+```bash
+curl -X PUT 'http://localhost:8080/api/users/1' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "johndoe_updated",
+    "email": "john.doe.updated@example.com",
+    "password_hash": "newSecurePassword456",
+    "firstname": "John",
+    "lastname": "Doe",
+    "phone_number": "+1234567890",
+    "role": "ADMIN",
+    "is_active": true,
+    "profileImage": "/images/profiles/johndoe_new.jpg"
+  }'
+```
+
+## Response
+
+<ResponseField name="id" type="long">
+  Unique identifier of the updated user
+</ResponseField>
+
+<ResponseField name="username" type="string">
+  User's updated username
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  User's updated email address
+</ResponseField>
+
+<ResponseField name="password_hash" type="string">
+  Encrypted password hash
+</ResponseField>
+
+<ResponseField name="firstname" type="string">
+  User's updated first name
+</ResponseField>
+
+<ResponseField name="lastname" type="string">
+  User's updated last name
+</ResponseField>
+
+<ResponseField name="phone_number" type="string">
+  User's updated phone number
+</ResponseField>
+
+<ResponseField name="role" type="string">
+  User's updated role
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Updated active status
+</ResponseField>
+
+<ResponseField name="profileImage" type="string">
+  Updated profile image URL or path
+</ResponseField>
+
+<ResponseField name="created_at" type="timestamp">
+  Original creation timestamp
+</ResponseField>
+
+<ResponseField name="updated_at" type="timestamp">
+  Timestamp of the last update
+</ResponseField>
+
+## Example Response
+
+```json
+{
+  "id": 1,
+  "username": "johndoe_updated",
+  "email": "john.doe.updated@example.com",
+  "password_hash": "$2a$10$X7qp9uZOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
+  "firstname": "John",
+  "lastname": "Doe",
+  "phone_number": "+1234567890",
+  "role": "ADMIN",
+  "is_active": true,
+  "profileImage": "/images/profiles/johndoe_new.jpg",
+  "created_at": "2024-01-15T10:30:00Z",
+  "updated_at": "2024-01-26T16:45:00Z"
+}
+```
+
+## Error Responses
+
+<ResponseField name="404" type="error">
+  User not found - returned when no user exists with the specified ID
+</ResponseField>
+
+## Notes
+
+- The user must exist before it can be updated
+- The `id` in the request body is overridden with the path parameter to ensure consistency
+- Passwords are automatically hashed using BCrypt encryption
+- Send the password in plain text in the `password_hash` field - the server handles encryption

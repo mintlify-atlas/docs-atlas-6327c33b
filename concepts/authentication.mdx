@@ -1,0 +1,232 @@
+---
+title: Authentication & Authorization
+description: Understanding DriveX authentication flow, user management, and security implementation
+---
+
+## Authentication Overview
+
+DriveX implements a **credential-based authentication** system using email and password. Passwords are securely hashed using BCrypt before storage.
+
+## Authentication Endpoints
+
+### Login Flow
+
+The login endpoint validates user credentials and returns the user object on success:
+
+```java
+@PostMapping("/login")
+public ResponseEntity<User> login(@RequestBody LoginRequest request) {
+    return service.login(request.getEmail(), request.getPassword())
+            .map(ResponseEntity::ok)  // 200 + User object
+            .orElse(ResponseEntity.status(401).build()); // 401 without body
+}
+```
+
+**Request Format:**
+
+```json
+{
+  "email": "user@example.com",
+  "password": "plaintext-password"
+}
+```
+
+**Response (Success - 200 OK):**
+
+```json
+{
+  "id": 1,
+  "username": "johndoe",
+  "email": "user@example.com",
+  "firstname": "John",
+  "lastname": "Doe",
+  "phone_number": "+1234567890",
+  "role": "USER",
+  "is_active": true,
+  "profileImage": "https://example.com/avatar.jpg"
+}
+```
+
+**Response (Failure - 401 Unauthorized):**
+
+Empty response body with 401 status code.
+
+<Warning>
+The password_hash field is included in the User entity but should be excluded from API responses in production. Consider using DTOs (Data Transfer Objects) to control response structure.
+</Warning>
+
+### Registration Flow
+
+The registration endpoint creates new user accounts with duplicate email detection:
+
+```java
+@PostMapping("/register")
+public ResponseEntity<?> register(@RequestBody User user) {
+    if (service.findByEmail(user.getEmail()).isPresent()) {
+        return ResponseEntity.status(409).body("Email ya registrado");
+    }
+    
+    User saved = service.save(user);
+    return ResponseEntity.ok(saved);
+}
+```
+
+**Request Format:**
+
+```json
+{
+  "username": "johndoe",
+  "email": "user@example.com",
+  "password_hash": "plaintext-password",
+  "firstname": "John",
+  "lastname": "Doe",
+  "phone_number": "+1234567890",
+  "role": "USER"
+}
+```
+
+<Note>
+Despite the field name being `password_hash`, the client should send the plaintext password. The service layer is responsible for hashing it using BCrypt before storage.
+</Note>
+
+**Response (Success - 200 OK):**
+
+Returns the complete user object with generated ID and timestamps.
+
+**Response (Conflict - 409):**
+
+```json
+"Email ya registrado"
+```
+
+## Password Security
+
+DriveX uses **BCrypt** for password hashing, configured through Spring Security:
+
+```java
+@Configuration
+public class SecurityConfig {
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+}
+```
+
+### BCrypt Features
+
+<AccordionGroup>
+  <Accordion title="Adaptive Hashing">
+    BCrypt's computational cost can be increased over time as hardware improves, making it resistant to brute-force attacks even as computing power increases.
+  </Accordion>
+  
+  <Accordion title="Built-in Salt">
+    Each password hash includes a random salt, ensuring that identical passwords produce different hashes. This protects against rainbow table attacks.
+  </Accordion>
+  
+  <Accordion title="One-Way Function">
+    BCrypt is designed to be slow and computationally expensive, making it impractical to reverse the hash or perform rapid brute-force attempts.
+  </Accordion>
+</AccordionGroup>
+
+## User Roles
+
+The system supports role-based access control through the `role` field in the User entity:
+
+```java
+private String role;
+```
+
+Common roles:
+- **USER** - Standard customer with rental capabilities
+- **ADMIN** - Administrative access for system management
+
+<Info>
+Role enforcement must be implemented in the service layer or through Spring Security method-level security annotations.
+</Info>
+
+## User Status Management
+
+Users have an `is_active` flag to control account status:
+
+```java
+private Boolean is_active;
+```
+
+This allows for:
+- Soft deletion of accounts
+- Temporary account suspension
+- Account activation workflows
+
+## Authentication State Management
+
+<Warning>
+**Current Implementation Limitation:**
+
+The current authentication flow does not implement session management or token-based authentication. Each request requires credential validation.
+
+**Recommended Improvements:**
+- Implement JWT (JSON Web Tokens) for stateless authentication
+- Add refresh token mechanism for extended sessions
+- Implement token expiration and renewal
+- Add logout functionality
+</Warning>
+
+## Security Best Practices
+
+<Steps>
+  <Step title="Never Log Passwords">
+    Ensure passwords are never logged in application logs, even during debugging.
+  </Step>
+  
+  <Step title="Use HTTPS">
+    Always transmit credentials over HTTPS to prevent interception.
+  </Step>
+  
+  <Step title="Implement Rate Limiting">
+    Add rate limiting to login endpoints to prevent brute-force attacks.
+  </Step>
+  
+  <Step title="Add Account Lockout">
+    Lock accounts after multiple failed login attempts.
+  </Step>
+  
+  <Step title="Use DTOs">
+    Never return password_hash or other sensitive fields in API responses.
+  </Step>
+</Steps>
+
+## User Entity Fields
+
+Complete list of User entity fields:
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | Long | Primary key, auto-generated |
+| `username` | String | Unique username |
+| `email` | String | User email (used for login) |
+| `password_hash` | String | BCrypt hashed password |
+| `firstname` | String | User's first name |
+| `lastname` | String | User's last name |
+| `phone_number` | String | Contact phone number |
+| `role` | String | User role (USER, ADMIN) |
+| `is_active` | Boolean | Account active status |
+| `created_at` | Timestamp | Account creation timestamp |
+| `updated_at` | Timestamp | Last update timestamp |
+| `profileImage` | String | URL to profile image |
+
+## CORS Configuration
+
+The AuthController enables cross-origin requests:
+
+```java
+@CrossOrigin(origins = "*")
+```
+
+<Tip>
+In production, replace the wildcard `*` with specific allowed origins to improve security:
+
+```java
+@CrossOrigin(origins = "https://yourdomain.com")
+```
+</Tip>

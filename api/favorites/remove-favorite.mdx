@@ -1,0 +1,41 @@
+---
+title: "Remove Favorite"
+api: "DELETE /api/favourites/{userId}/{vehicleId}"
+description: "Remove a vehicle from a user's favorites list"
+---
+
+This endpoint removes a specific vehicle from a user's favorites list.
+
+<ParamField path="userId" type="long" required>
+  The unique identifier of the user
+</ParamField>
+
+<ParamField path="vehicleId" type="long" required>
+  The unique identifier of the vehicle to remove from favorites
+</ParamField>
+
+### Response
+
+Returns no content (void) on success. The operation is idempotent - attempting to remove a favorite that doesn't exist will succeed without error.
+
+### Behavior
+
+- Deletes the favorite relationship between the specified user and vehicle
+- If no such favorite exists, the request succeeds without error
+- The vehicle and user records remain unchanged; only the favorite relationship is removed
+
+<RequestExample>
+
+```bash cURL
+curl -X DELETE https://api.drivex.com/api/favourites/123/456
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```text Response
+200 OK
+```
+
+</ResponseExample>

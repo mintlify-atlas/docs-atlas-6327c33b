@@ -1,0 +1,129 @@
+---
+title: "Search Users"
+api: "GET /api/users/search"
+description: "Search for users by username or email"
+---
+
+## Overview
+
+This endpoint allows you to search for users by their username or email address. The search is case-insensitive and matches partial strings.
+
+## Request
+
+<ParamField query="q" type="string" required>
+  Search query to match against username or email. The search is case-insensitive and matches partial strings.
+</ParamField>
+
+```bash
+curl -X GET 'http://localhost:8080/api/users/search?q=john' \
+  -H 'Content-Type: application/json'
+```
+
+## Response
+
+<ResponseField name="users" type="array">
+  Array of user objects matching the search criteria
+  
+  <ResponseField name="id" type="long">
+    Unique identifier for the user
+  </ResponseField>
+  
+  <ResponseField name="username" type="string">
+    User's username
+  </ResponseField>
+  
+  <ResponseField name="email" type="string">
+    User's email address
+  </ResponseField>
+  
+  <ResponseField name="password_hash" type="string">
+    Encrypted password hash
+  </ResponseField>
+  
+  <ResponseField name="firstname" type="string">
+    User's first name
+  </ResponseField>
+  
+  <ResponseField name="lastname" type="string">
+    User's last name
+  </ResponseField>
+  
+  <ResponseField name="phone_number" type="string">
+    User's phone number
+  </ResponseField>
+  
+  <ResponseField name="role" type="string">
+    User's role in the system (e.g., ADMIN, USER, DRIVER)
+  </ResponseField>
+  
+  <ResponseField name="is_active" type="boolean">
+    Whether the user account is active
+  </ResponseField>
+  
+  <ResponseField name="profileImage" type="string">
+    URL or path to the user's profile image
+  </ResponseField>
+  
+  <ResponseField name="created_at" type="timestamp">
+    Timestamp when the user was created
+  </ResponseField>
+  
+  <ResponseField name="updated_at" type="timestamp">
+    Timestamp when the user was last updated
+  </ResponseField>
+</ResponseField>
+
+## Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "username": "johndoe",
+    "email": "john.doe@example.com",
+    "password_hash": "$2a$10$...",
+    "firstname": "John",
+    "lastname": "Doe",
+    "phone_number": "+1234567890",
+    "role": "USER",
+    "is_active": true,
+    "profileImage": "/images/profiles/johndoe.jpg",
+    "created_at": "2024-01-15T10:30:00Z",
+    "updated_at": "2024-01-20T14:45:00Z"
+  },
+  {
+    "id": 4,
+    "username": "johnsmith",
+    "email": "john.smith@example.com",
+    "password_hash": "$2a$10$...",
+    "firstname": "John",
+    "lastname": "Smith",
+    "phone_number": "+1234567892",
+    "role": "DRIVER",
+    "is_active": true,
+    "profileImage": "/images/profiles/johnsmith.jpg",
+    "created_at": "2024-01-18T11:20:00Z",
+    "updated_at": "2024-01-23T09:15:00Z"
+  }
+]
+```
+
+## Search Behavior
+
+- The search is **case-insensitive**
+- Matches are found in both `username` and `email` fields
+- Partial matches are supported (e.g., "john" will match "johndoe" and "john.smith@example.com")
+- Returns an empty array if no matches are found
+
+## Example Queries
+
+```bash
+# Search for users with "admin" in username or email
+curl -X GET 'http://localhost:8080/api/users/search?q=admin'
+
+# Search for users with "@gmail.com" in their email
+curl -X GET 'http://localhost:8080/api/users/search?q=@gmail.com'
+
+# Search for users with "smith" in username or email
+curl -X GET 'http://localhost:8080/api/users/search?q=smith'
+```

@@ -1,0 +1,83 @@
+---
+title: "Get Rental"
+api: "GET /api/rentals/{id}"
+---
+
+Retrieves detailed information about a specific rental by its ID.
+
+## Path Parameters
+
+<ParamField path="id" type="long" required>
+  The unique identifier of the rental to retrieve
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="long">
+  Unique identifier for the rental
+</ResponseField>
+
+<ResponseField name="userId" type="long">
+  The ID of the user who made the reservation
+</ResponseField>
+
+<ResponseField name="vehicleId" type="long">
+  The ID of the rented vehicle
+</ResponseField>
+
+<ResponseField name="startDate" type="string">
+  Rental start date in ISO 8601 format
+</ResponseField>
+
+<ResponseField name="endDate" type="string">
+  Rental end date in ISO 8601 format
+</ResponseField>
+
+<ResponseField name="price" type="decimal">
+  Total rental price
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current rental status. One of:
+  - `RESERVED` - Rental has been reserved
+  - `ACTIVE` - Rental is currently active
+  - `COMPLETED` - Rental has been completed
+  - `CANCELLED` - Rental has been cancelled
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Timestamp when the rental was created (ISO 8601)
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  Timestamp when the rental was last updated (ISO 8601)
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X GET https://api.drivex.com/api/rentals/789 \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 OK
+{
+  "id": 789,
+  "userId": 123,
+  "vehicleId": 456,
+  "startDate": "2026-03-15",
+  "endDate": "2026-03-20",
+  "price": 450.00,
+  "status": "RESERVED",
+  "createdAt": "2026-03-01T10:30:00Z",
+  "updatedAt": "2026-03-01T10:30:00Z"
+}
+```
+
+```json 404 Not Found
+{
+  "error": "Rental not found"
+}
+```
+</ResponseExample>

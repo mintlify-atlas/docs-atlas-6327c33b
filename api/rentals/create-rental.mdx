@@ -1,0 +1,110 @@
+---
+title: "Create Rental"
+api: "POST /api/rentals"
+---
+
+Creates a new rental reservation for a vehicle. The system automatically checks vehicle availability for the requested date range before creating the rental.
+
+<Note>
+The rental will be created with a status of `RESERVED` by default.
+</Note>
+
+## Request Body
+
+<ParamField body="userId" type="long" required>
+  The ID of the user making the rental reservation
+</ParamField>
+
+<ParamField body="vehicleId" type="long" required>
+  The ID of the vehicle to be rented
+</ParamField>
+
+<ParamField body="startDate" type="string" required>
+  Rental start date in ISO 8601 format (YYYY-MM-DD)
+</ParamField>
+
+<ParamField body="endDate" type="string" required>
+  Rental end date in ISO 8601 format (YYYY-MM-DD)
+</ParamField>
+
+<ParamField body="price" type="decimal" required>
+  Total rental price with up to 2 decimal places
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="long">
+  Unique identifier for the rental
+</ResponseField>
+
+<ResponseField name="userId" type="long">
+  The ID of the user who made the reservation
+</ResponseField>
+
+<ResponseField name="vehicleId" type="long">
+  The ID of the rented vehicle
+</ResponseField>
+
+<ResponseField name="startDate" type="string">
+  Rental start date
+</ResponseField>
+
+<ResponseField name="endDate" type="string">
+  Rental end date
+</ResponseField>
+
+<ResponseField name="price" type="decimal">
+  Total rental price
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current rental status. One of:
+  - `RESERVED` - Rental has been reserved
+  - `ACTIVE` - Rental is currently active
+  - `COMPLETED` - Rental has been completed
+  - `CANCELLED` - Rental has been cancelled
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Timestamp when the rental was created (ISO 8601)
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  Timestamp when the rental was last updated (ISO 8601)
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X POST https://api.drivex.com/api/rentals \
+  -H "Content-Type: application/json" \
+  -d '{
+    "userId": 123,
+    "vehicleId": 456,
+    "startDate": "2026-03-15",
+    "endDate": "2026-03-20",
+    "price": 450.00
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json 201 Created
+{
+  "id": 789,
+  "userId": 123,
+  "vehicleId": 456,
+  "startDate": "2026-03-15",
+  "endDate": "2026-03-20",
+  "price": 450.00,
+  "status": "RESERVED",
+  "createdAt": "2026-03-01T10:30:00Z",
+  "updatedAt": "2026-03-01T10:30:00Z"
+}
+```
+
+```json 400 Bad Request
+{
+  "error": "Vehicle not available for the requested period"
+}
+```
+</ResponseExample>

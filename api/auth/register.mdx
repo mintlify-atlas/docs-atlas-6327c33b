@@ -1,0 +1,160 @@
+---
+title: 'Register'
+description: 'Create a new user account'
+---
+
+# Register
+
+Creates a new user account in the DriveX system. The password is automatically hashed using BCrypt before storage.
+
+## Endpoint
+
+```
+POST /auth/register
+```
+
+## Request Body
+
+<ParamField body="username" type="string" required>
+  The desired username for the new account
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  The user's email address (must be unique)
+</ParamField>
+
+<ParamField body="password_hash" type="string" required>
+  The user's password in plain text (will be hashed automatically)
+</ParamField>
+
+<ParamField body="firstname" type="string">
+  The user's first name
+</ParamField>
+
+<ParamField body="lastname" type="string">
+  The user's last name
+</ParamField>
+
+<ParamField body="phone_number" type="string">
+  The user's phone number
+</ParamField>
+
+<ParamField body="role" type="string">
+  The user's role in the system
+</ParamField>
+
+<ParamField body="is_active" type="boolean">
+  Whether the user account should be active (defaults to system settings)
+</ParamField>
+
+<ParamField body="profileImage" type="string">
+  URL or path to the user's profile image
+</ParamField>
+
+## Response
+
+### Success Response (200 OK)
+
+Returns the created user object with the hashed password.
+
+<ResponseField name="id" type="long">
+  Unique identifier for the newly created user
+</ResponseField>
+
+<ResponseField name="username" type="string">
+  The user's username
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  The user's email address
+</ResponseField>
+
+<ResponseField name="password_hash" type="string">
+  The hashed password (BCrypt)
+</ResponseField>
+
+<ResponseField name="firstname" type="string">
+  The user's first name
+</ResponseField>
+
+<ResponseField name="lastname" type="string">
+  The user's last name
+</ResponseField>
+
+<ResponseField name="phone_number" type="string">
+  The user's phone number
+</ResponseField>
+
+<ResponseField name="role" type="string">
+  The user's role in the system
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether the user account is active
+</ResponseField>
+
+<ResponseField name="created_at" type="timestamp">
+  When the user account was created
+</ResponseField>
+
+<ResponseField name="updated_at" type="timestamp">
+  When the user account was last updated
+</ResponseField>
+
+<ResponseField name="profileImage" type="string">
+  URL or path to the user's profile image
+</ResponseField>
+
+### Error Responses
+
+#### 409 Conflict
+
+Returned when the email address is already registered in the system.
+
+```json
+"Email ya registrado"
+```
+
+## Example
+
+### Request
+
+```bash
+curl -X POST https://api.drivex.com/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
+    "username": "johndoe",
+    "email": "user@example.com",
+    "password_hash": "mySecurePassword123",
+    "firstname": "John",
+    "lastname": "Doe",
+    "phone_number": "+1234567890",
+    "role": "user",
+    "is_active": true
+  }'
+```
+
+### Response (200 OK)
+
+```json
+{
+  "id": 1,
+  "username": "johndoe",
+  "email": "user@example.com",
+  "password_hash": "$2a$10$abcdefghijklmnopqrstuv",
+  "firstname": "John",
+  "lastname": "Doe",
+  "phone_number": "+1234567890",
+  "role": "user",
+  "is_active": true,
+  "created_at": "2026-03-01T10:30:00Z",
+  "updated_at": "2026-03-01T10:30:00Z",
+  "profileImage": null
+}
+```
+
+### Response (409 Conflict)
+
+```json
+"Email ya registrado"
+```

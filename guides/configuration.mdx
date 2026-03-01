@@ -1,0 +1,189 @@
+---
+title: Configuration
+description: Configure DriveX Backend API with environment variables and application properties
+---
+
+This guide covers all configuration options for the DriveX Backend API, including database connections, server settings, and JPA configuration.
+
+## Application Properties
+
+The main configuration file is located at `src/main/resources/application.properties`. All settings can be overridden using environment variables.
+
+### Application Name
+
+```properties
+spring.application.name=DriveX-backend
+```
+
+Defines the application name used in Spring Boot's internal configuration and logging.
+
+## Database Configuration
+
+<Steps>
+  <Step title="Configure Database Connection">
+    Set up your MySQL database connection parameters:
+
+    <CodeGroup>
+    ```properties application.properties
+    spring.datasource.url=jdbc:mysql://localhost:3306/railway
+    spring.datasource.username=root
+    spring.datasource.password=your_password_here
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+    ```
+
+    ```bash Environment Variables
+    export SPRING_DATASOURCE_URL=jdbc:mysql://localhost:3306/railway
+    export SPRING_DATASOURCE_USERNAME=root
+    export SPRING_DATASOURCE_PASSWORD=your_password_here
+    ```
+    </CodeGroup>
+
+    <Warning>
+      Never commit sensitive credentials to version control. Use environment variables for production deployments.
+    </Warning>
+  </Step>
+
+  <Step title="Configure JPA/Hibernate Settings">
+    The application uses Spring Data JPA with Hibernate as the ORM provider:
+
+    ```properties
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=true
+    spring.jpa.properties.hibernate.format_sql=true
+    spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+    ```
+
+    <Note>
+      The `ddl-auto=update` setting automatically updates the database schema based on your entity classes. Consider using `validate` in production environments.
+    </Note>
+  </Step>
+</Steps>
+
+## Server Configuration
+
+### Port and Context Path
+
+Configure the server port and base API path:
+
+```properties
+server.servlet.context-path=/api
+server.port=${PORT:8080}
+server.address=0.0.0.0
+```
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `server.port` | `8080` | HTTP port the server listens on. Reads from `PORT` environment variable if available |
+| `server.servlet.context-path` | `/api` | Base path for all API endpoints |
+| `server.address` | `0.0.0.0` | Network interface to bind to. `0.0.0.0` allows external access |
+
+<Note>
+  All API endpoints will be prefixed with `/api`. For example, the vehicles endpoint will be accessible at `/api/vehicles`.
+</Note>
+
+## Configuration Options Reference
+
+### Database Properties
+
+<CodeGroup>
+```properties MySQL (Default)
+spring.datasource.url=jdbc:mysql://localhost:3306/railway
+spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+```
+
+```properties PostgreSQL (Alternative)
+spring.datasource.url=jdbc:postgresql://localhost:5432/drivex
+spring.datasource.driver-class-name=org.postgresql.Driver
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+```
+</CodeGroup>
+
+### JPA/Hibernate Properties
+
+| Property | Value | Description |
+|----------|-------|-------------|
+| `spring.jpa.hibernate.ddl-auto` | `update` | Schema generation strategy. Options: `create`, `create-drop`, `update`, `validate`, `none` |
+| `spring.jpa.show-sql` | `true` | Log SQL statements to console |
+| `spring.jpa.properties.hibernate.format_sql` | `true` | Format logged SQL for readability |
+| `spring.jpa.database-platform` | `org.hibernate.dialect.MySQLDialect` | Hibernate dialect for MySQL optimization |
+
+## Environment-Specific Configuration
+
+### Development
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+<Note>
+  Development mode enables SQL logging and automatic schema updates for faster iteration.
+</Note>
+
+### Production
+
+```properties
+spring.jpa.hibernate.ddl-auto=validate
+spring.jpa.show-sql=false
+spring.jpa.properties.hibernate.format_sql=false
+```
+
+<Warning>
+  In production:
+  - Use `validate` to prevent automatic schema changes
+  - Disable SQL logging for better performance
+  - Use environment variables for all sensitive configuration
+  - Consider using Spring Profiles for environment-specific configs
+</Warning>
+
+## Using Environment Variables
+
+All Spring Boot properties can be overridden with environment variables by converting the property name:
+
+1. Convert to uppercase
+2. Replace dots (`.`) with underscores (`_`)
+3. Replace hyphens (`-`) with underscores (`_`)
+
+**Examples:**
+
+| Property | Environment Variable |
+|----------|---------------------|
+| `spring.datasource.url` | `SPRING_DATASOURCE_URL` |
+| `spring.datasource.username` | `SPRING_DATASOURCE_USERNAME` |
+| `server.port` | `SERVER_PORT` |
+| `spring.jpa.show-sql` | `SPRING_JPA_SHOW_SQL` |
+
+### Docker Example
+
+```bash
+docker run -p 8080:8080 \
+  -e SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/railway \
+  -e SPRING_DATASOURCE_USERNAME=root \
+  -e SPRING_DATASOURCE_PASSWORD=secret \
+  -e PORT=8080 \
+  drivex-backend:latest
+```
+
+## Dependencies
+
+The following key dependencies are configured in `pom.xml`:
+
+- **Spring Boot 4.0.0** - Application framework
+- **Spring Data JPA** - Database access and ORM
+- **MySQL Connector/J** - MySQL JDBC driver
+- **Spring Security Crypto** - Password hashing
+- **Lombok 1.18.42** - Boilerplate reduction
+- **Spring Boot DevTools** - Development utilities
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Database Setup" icon="database" href="/guides/database-setup">
+    Learn how to set up and configure the DriveX database schema
+  </Card>
+  <Card title="Deployment" icon="rocket" href="/guides/deployment">
+    Deploy the DriveX Backend API to production
+  </Card>
+</CardGroup>

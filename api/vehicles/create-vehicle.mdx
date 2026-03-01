@@ -1,0 +1,202 @@
+---
+title: "Create Vehicle"
+api: "POST /api/vehicles"
+description: "Add a new vehicle to the system"
+---
+
+Creates a new vehicle. The `reference` field is auto-generated if not provided, following the format: `{BRAND}{YEAR}{RANDOM}` (e.g., BMW2024A1B2). The ID is auto-assigned and any provided ID will be ignored.
+
+## Request Body
+
+<ParamField body="brand" type="string" required>
+  Vehicle brand name
+</ParamField>
+
+<ParamField body="model" type="string" required>
+  Vehicle model name
+</ParamField>
+
+<ParamField body="reference" type="string" optional>
+  Unique reference code. If not provided or blank, it will be auto-generated using the format: `{BRAND}{YEAR}{RANDOM}`
+</ParamField>
+
+<ParamField body="hp" type="integer" optional>
+  Horsepower
+</ParamField>
+
+<ParamField body="autonomy" type="integer" optional>
+  Autonomy/range in kilometers
+</ParamField>
+
+<ParamField body="averageconsumption" type="double" optional>
+  Average fuel consumption
+</ParamField>
+
+<ParamField body="description" type="string" optional>
+  Vehicle description
+</ParamField>
+
+<ParamField body="price" type="decimal" optional>
+  Vehicle price
+</ParamField>
+
+<ParamField body="year" type="integer" optional>
+  Manufacturing year (used in auto-generated reference)
+</ParamField>
+
+<ParamField body="fuelType" type="string" optional>
+  Fuel type (e.g., gasoline, diesel, electric, hybrid)
+</ParamField>
+
+<ParamField body="mileage" type="long" optional>
+  Mileage in kilometers
+</ParamField>
+
+<ParamField body="extras" type="string" optional>
+  Additional features and extras
+</ParamField>
+
+<ParamField body="doors" type="integer" optional>
+  Number of doors
+</ParamField>
+
+<ParamField body="vehicleType" type="string" optional>
+  Type of vehicle (e.g., sedan, suv, truck, motorcycle)
+</ParamField>
+
+<ParamField body="offers" type="string" optional>
+  Special offers status (e.g., "Yes" or "No")
+</ParamField>
+
+<ParamField body="images" type="array" optional>
+  Array of vehicle images
+</ParamField>
+
+## Response
+
+Returns the created Vehicle object with auto-generated ID and reference.
+
+<ResponseField name="id" type="long">
+  Auto-generated unique identifier
+</ResponseField>
+
+<ResponseField name="reference" type="string">
+  Auto-generated or provided reference code
+</ResponseField>
+
+<ResponseField name="brand" type="string">
+  Vehicle brand name
+</ResponseField>
+
+<ResponseField name="model" type="string">
+  Vehicle model name
+</ResponseField>
+
+<ResponseField name="hp" type="integer">
+  Horsepower
+</ResponseField>
+
+<ResponseField name="autonomy" type="integer">
+  Autonomy/range in kilometers
+</ResponseField>
+
+<ResponseField name="averageconsumption" type="double">
+  Average fuel consumption
+</ResponseField>
+
+<ResponseField name="description" type="string">
+  Vehicle description
+</ResponseField>
+
+<ResponseField name="price" type="decimal">
+  Vehicle price
+</ResponseField>
+
+<ResponseField name="year" type="integer">
+  Manufacturing year
+</ResponseField>
+
+<ResponseField name="fuelType" type="string">
+  Fuel type
+</ResponseField>
+
+<ResponseField name="mileage" type="long">
+  Mileage in kilometers
+</ResponseField>
+
+<ResponseField name="extras" type="string">
+  Additional features and extras
+</ResponseField>
+
+<ResponseField name="createdAt" type="datetime">
+  Timestamp when created
+</ResponseField>
+
+<ResponseField name="updatedAt" type="datetime">
+  Timestamp when last updated
+</ResponseField>
+
+<ResponseField name="doors" type="integer">
+  Number of doors
+</ResponseField>
+
+<ResponseField name="vehicleType" type="string">
+  Type of vehicle
+</ResponseField>
+
+<ResponseField name="offers" type="string">
+  Special offers status
+</ResponseField>
+
+<ResponseField name="images" type="array">
+  Array of vehicle images
+</ResponseField>
+
+<RequestExample>
+```bash cURL
+curl -X POST "http://localhost:8080/api/vehicles" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "brand": "BMW",
+    "model": "X5",
+    "hp": 335,
+    "autonomy": 650,
+    "averageconsumption": 8.5,
+    "description": "Luxury SUV with advanced features",
+    "price": 65000.00,
+    "year": 2024,
+    "fuelType": "diesel",
+    "mileage": 15000,
+    "extras": "Navigation, Leather seats, Sunroof",
+    "doors": 5,
+    "vehicleType": "SUV",
+    "offers": "Yes"
+  }'
+```
+</RequestExample>
+
+<ResponseExample>
+```json Response
+{
+  "id": 42,
+  "reference": "BMW2024A1B2",
+  "brand": "BMW",
+  "model": "X5",
+  "hp": 335,
+  "autonomy": 650,
+  "averageconsumption": 8.5,
+  "description": "Luxury SUV with advanced features",
+  "price": 65000.00,
+  "year": 2024,
+  "fuelType": "diesel",
+  "mileage": 15000,
+  "extras": "Navigation, Leather seats, Sunroof",
+  "createdAt": "2024-03-01T15:30:00",
+  "updatedAt": "2024-03-01T15:30:00",
+  "doors": 5,
+  "vehicleType": "SUV",
+  "offers": "Yes",
+  "images": []
+}
+```
+</ResponseExample>

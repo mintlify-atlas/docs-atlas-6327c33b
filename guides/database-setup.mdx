@@ -1,0 +1,361 @@
+---
+title: Database Setup
+description: Set up and configure the MySQL database for DriveX Backend API
+---
+
+This guide walks you through setting up the MySQL database, understanding the schema, and configuring database connections for the DriveX Backend API.
+
+## Prerequisites
+
+- MySQL 8.0 or higher
+- Database user with CREATE, ALTER, INSERT, UPDATE, DELETE privileges
+- MySQL client or GUI tool (optional)
+
+## Quick Start
+
+<Steps>
+  <Step title="Create the Database">
+    Create a new MySQL database for DriveX:
+
+    ```sql
+    CREATE DATABASE DriveX;
+    USE DriveX;
+    ```
+  </Step>
+
+  <Step title="Configure Connection">
+    Update your `application.properties` or set environment variables:
+
+    ```properties
+    spring.datasource.url=jdbc:mysql://localhost:3306/DriveX
+    spring.datasource.username=root
+    spring.datasource.password=your_password
+    ```
+
+    <Note>
+      The database name in the connection URL should match the database you created.
+    </Note>
+  </Step>
+
+  <Step title="Start the Application">
+    Start the Spring Boot application. With `spring.jpa.hibernate.ddl-auto=update`, Hibernate will automatically create the necessary tables based on your JPA entities.
+
+    ```bash
+    ./mvnw spring-boot:run
+    ```
+  </Step>
+</Steps>
+
+## Database Schema
+
+The DriveX application uses the following core tables:
+
+### Vehicles Table
+
+Stores vehicle inventory information:
+
+```sql
+CREATE TABLE vehicles (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    reference VARCHAR(50) NOT NULL,
+    brand ENUM('Ferrari', 'Lamborghini', 'Porsche', 'Maserati', 
+               'Bentley', 'Toyota', 'Honda', 'BMW', 'Audi', 
+               'Mercedes', 'Yamaha', 'Kawasaki', 'Ducati', ...),
+    model VARCHAR(20),
+    hp INT,
+    autonomy INT,
+    average_consumption REAL,
+    description VARCHAR(200),
+    price REAL,
+    year INT,
+    mileage BIGINT,
+    fuel_type VARCHAR(20),
+    extras VARCHAR(500),
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `id` | INT | Primary key, auto-increment |
+| `reference` | VARCHAR(50) | Unique vehicle reference code (e.g., REF001) |
+| `brand` | ENUM | Vehicle brand from predefined list |
+| `model` | VARCHAR(20) | Vehicle model name |
+| `hp` | INT | Horsepower |
+| `autonomy` | INT | Range/autonomy in kilometers |
+| `average_consumption` | REAL | Average fuel/energy consumption |
+| `price` | REAL | Sale or rental price |
+| `fuel_type` | VARCHAR(20) | Fuel type (Gasolina, Diésel, Eléctrico, Híbrido) |
+
+<Note>
+  The `brand` field uses an extensive ENUM containing over 100 vehicle brands including cars, motorcycles, and classic vehicles.
+</Note>
+
+### Vehicle Images Table
+
+Manages multiple images per vehicle:
+
+```sql
+CREATE TABLE vehicle_images (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    vehicle_id INT NOT NULL,
+    image_url VARCHAR(255) NOT NULL,
+    is_main BOOLEAN DEFAULT FALSE,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (vehicle_id) REFERENCES vehicles(id)
+);
+```
+
+**Features:**
+- Multiple images per vehicle
+- `is_main` flag to mark the primary image
+- Cascading delete when vehicle is removed
+
+### Users Table
+
+Stores user account information:
+
+```sql
+CREATE TABLE users (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    username VARCHAR(20),
+    email VARCHAR(50),
+    password_hash VARCHAR(255),
+    first_name VARCHAR(20),
+    last_name VARCHAR(50),
+    phone_number VARCHAR(15),
+    is_active BOOLEAN,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    role VARCHAR(20)
+);
+```
+
+**Key Fields:**
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `password_hash` | VARCHAR(255) | Hashed password using BCrypt |
+| `is_active` | BOOLEAN | Account activation status |
+| `role` | VARCHAR(20) | User role (e.g., "Admin", "User") |
+
+<Warning>
+  Passwords are stored as BCrypt hashes using Spring Security Crypto. Never store plain-text passwords.
+</Warning>
+
+### Rentals Table
+
+Tracks vehicle rental reservations:
+
+```sql
+CREATE TABLE IF NOT EXISTS rentals (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    vehicle_id INT NOT NULL,
+    start_date DATE NOT NULL,
+    end_date DATE NOT NULL,
+    price DECIMAL(10,2),
+    status VARCHAR(20) DEFAULT 'RESERVED',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    CONSTRAINT fk_rentals_user FOREIGN KEY (user_id) 
+        REFERENCES users(id) ON DELETE CASCADE,
+    CONSTRAINT fk_rentals_vehicle FOREIGN KEY (vehicle_id) 
+        REFERENCES vehicles(id) ON DELETE CASCADE,
+    INDEX idx_rentals_vehicle_dates (vehicle_id, start_date, end_date)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+**Features:**
+- Date range validation for rental periods
+- Composite index on vehicle and dates for efficient availability queries
+- Cascading deletes to maintain referential integrity
+- Automatic timestamp updates
+
+### Transactions Table
+
+Records financial transactions for sales and rentals:
+
+```sql
+CREATE TABLE IF NOT EXISTS transactions (
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    rental_id INT,
+    vehicle_id INT,
+    buyer_id INT,
+    seller_id INT,
+    transaction_type VARCHAR(50),
+    amount DECIMAL(12,2),
+    order_status VARCHAR(50),
+    transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    rental_start_date DATE,
+    rental_end_date DATE,
+    CONSTRAINT fk_transactions_rental FOREIGN KEY (rental_id) 
+        REFERENCES rentals(id) ON DELETE SET NULL,
+    INDEX idx_transactions_rental (rental_id),
+    INDEX idx_transactions_vehicle (vehicle_id)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+```
+
+**Transaction Types:**
+- Vehicle sales
+- Rental payments
+- Deposits and refunds
+
+**Order Statuses:**
+- `pending` - Payment pending
+- `paid` - Payment completed
+- `shipped` - Vehicle in transit (for sales)
+- `delivered` - Transaction completed
+- `cancelled` - Transaction cancelled
+
+## JPA Configuration
+
+The application uses Spring Data JPA with Hibernate. Configuration in `application.properties`:
+
+```properties
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+```
+
+### DDL Auto Options
+
+| Option | Behavior | Use Case |
+|--------|----------|----------|
+| `create` | Drop and recreate tables on startup | Initial development |
+| `create-drop` | Create on startup, drop on shutdown | Testing |
+| `update` | Update schema to match entities | Development |
+| `validate` | Only validate schema matches entities | Production |
+| `none` | No schema management | Production with manual migrations |
+
+<Warning>
+  **Production Recommendation**: Use `validate` or `none` in production. Automatic schema updates can cause data loss if entities are modified incorrectly.
+</Warning>
+
+## Database Connection Pooling
+
+Spring Boot automatically configures HikariCP as the connection pool. Default settings are suitable for most applications.
+
+**Optional HikariCP Configuration:**
+
+```properties
+# Maximum number of connections in the pool
+spring.datasource.hikari.maximum-pool-size=10
+
+# Minimum number of idle connections
+spring.datasource.hikari.minimum-idle=5
+
+# Connection timeout (ms)
+spring.datasource.hikari.connection-timeout=30000
+
+# Maximum lifetime of a connection (ms)
+spring.datasource.hikari.max-lifetime=1800000
+```
+
+## Sample Data
+
+The database schema includes sample data for testing. The `bs.sql` file contains INSERT statements for:
+
+- **100 vehicles** covering luxury cars, standard vehicles, motorcycles, and classic cars
+- Diverse brands including Ferrari, Lamborghini, Toyota, Yamaha, Ducati, and more
+- Price range from €3,000 to €2.8M
+- Various fuel types: Gasoline, Diesel, Electric, Hybrid
+
+<Note>
+  Sample data is useful for development and testing but should not be used in production environments.
+</Note>
+
+## Database Migrations
+
+For production environments, consider using database migration tools:
+
+<CodeGroup>
+```xml Flyway (pom.xml)
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-core</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.flywaydb</groupId>
+    <artifactId>flyway-mysql</artifactId>
+</dependency>
+```
+
+```xml Liquibase (pom.xml)
+<dependency>
+    <groupId>org.liquibase</groupId>
+    <artifactId>liquibase-core</artifactId>
+</dependency>
+```
+</CodeGroup>
+
+## Troubleshooting
+
+### Connection Issues
+
+<AccordionGroup>
+  <Accordion title="Unable to connect to MySQL">
+    **Checklist:**
+    - Verify MySQL is running: `systemctl status mysql` or `brew services list`
+    - Check host and port in connection URL
+    - Verify username and password
+    - Ensure database exists: `SHOW DATABASES;`
+    - Check firewall rules if connecting remotely
+  </Accordion>
+
+  <Accordion title="Authentication errors">
+    **Solutions:**
+    ```sql
+    -- Check user privileges
+    SHOW GRANTS FOR 'root'@'localhost';
+    
+    -- Grant necessary permissions
+    GRANT ALL PRIVILEGES ON DriveX.* TO 'root'@'localhost';
+    FLUSH PRIVILEGES;
+    ```
+  </Accordion>
+
+  <Accordion title="Schema validation errors">
+    If you encounter schema mismatch errors:
+    
+    1. Verify `spring.jpa.hibernate.ddl-auto` setting
+    2. Check entity classes match database schema
+    3. Clear and regenerate schema if in development:
+       ```properties
+       spring.jpa.hibernate.ddl-auto=create
+       ```
+    
+    <Warning>
+      Using `create` will drop all existing data.
+    </Warning>
+  </Accordion>
+</AccordionGroup>
+
+## Railway MySQL Deployment
+
+The application is configured for Railway's MySQL service:
+
+```properties
+spring.datasource.url=jdbc:mysql://mysql.railway.internal:3306/railway
+spring.datasource.username=root
+spring.datasource.password=${MYSQL_PASSWORD}
+```
+
+<Note>
+  Railway automatically provides the internal MySQL hostname and injects credentials via environment variables.
+</Note>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Configuration" icon="gear" href="/guides/configuration">
+    Configure application properties and environment variables
+  </Card>
+  <Card title="Deployment" icon="rocket" href="/guides/deployment">
+    Deploy your application to production
+  </Card>
+</CardGroup>

@@ -1,0 +1,138 @@
+---
+title: "Create User"
+api: "POST /api/users"
+description: "Create a new user in the system"
+---
+
+## Overview
+
+This endpoint creates a new user in the DriveX system. The password is automatically hashed using BCrypt encryption before storage.
+
+## Request
+
+<ParamField body="username" type="string" required>
+  Unique username for the user
+</ParamField>
+
+<ParamField body="email" type="string" required>
+  User's email address
+</ParamField>
+
+<ParamField body="password_hash" type="string" required>
+  User's password in plain text (will be encrypted automatically)
+</ParamField>
+
+<ParamField body="firstname" type="string">
+  User's first name
+</ParamField>
+
+<ParamField body="lastname" type="string">
+  User's last name
+</ParamField>
+
+<ParamField body="phone_number" type="string">
+  User's phone number
+</ParamField>
+
+<ParamField body="role" type="string">
+  User's role in the system (e.g., ADMIN, USER, DRIVER)
+</ParamField>
+
+<ParamField body="is_active" type="boolean">
+  Whether the user account should be active. Defaults to true
+</ParamField>
+
+<ParamField body="profileImage" type="string">
+  URL or path to the user's profile image
+</ParamField>
+
+```bash
+curl -X POST 'http://localhost:8080/api/users' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "username": "johndoe",
+    "email": "john.doe@example.com",
+    "password_hash": "mySecurePassword123",
+    "firstname": "John",
+    "lastname": "Doe",
+    "phone_number": "+1234567890",
+    "role": "USER",
+    "is_active": true,
+    "profileImage": "/images/profiles/johndoe.jpg"
+  }'
+```
+
+## Response
+
+<ResponseField name="id" type="long">
+  Unique identifier assigned to the newly created user
+</ResponseField>
+
+<ResponseField name="username" type="string">
+  User's username
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  User's email address
+</ResponseField>
+
+<ResponseField name="password_hash" type="string">
+  Encrypted password hash
+</ResponseField>
+
+<ResponseField name="firstname" type="string">
+  User's first name
+</ResponseField>
+
+<ResponseField name="lastname" type="string">
+  User's last name
+</ResponseField>
+
+<ResponseField name="phone_number" type="string">
+  User's phone number
+</ResponseField>
+
+<ResponseField name="role" type="string">
+  User's role in the system
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether the user account is active
+</ResponseField>
+
+<ResponseField name="profileImage" type="string">
+  URL or path to the user's profile image
+</ResponseField>
+
+<ResponseField name="created_at" type="timestamp">
+  Timestamp when the user was created
+</ResponseField>
+
+<ResponseField name="updated_at" type="timestamp">
+  Timestamp when the user was last updated
+</ResponseField>
+
+## Example Response
+
+```json
+{
+  "id": 3,
+  "username": "johndoe",
+  "email": "john.doe@example.com",
+  "password_hash": "$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy",
+  "firstname": "John",
+  "lastname": "Doe",
+  "phone_number": "+1234567890",
+  "role": "USER",
+  "is_active": true,
+  "profileImage": "/images/profiles/johndoe.jpg",
+  "created_at": "2024-01-25T15:30:00Z",
+  "updated_at": "2024-01-25T15:30:00Z"
+}
+```
+
+## Notes
+
+- The `id` field in the request body is automatically set to null to ensure a new user is created
+- Passwords are automatically hashed using BCrypt encryption before being stored
+- Send the password in plain text in the `password_hash` field - the server handles encryption

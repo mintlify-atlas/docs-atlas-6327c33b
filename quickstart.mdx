@@ -1,80 +1,301 @@
 ---
-title: "Quickstart"
-description: "Start building awesome documentation in minutes"
+title: Quickstart
+description: Get the DriveX Backend API up and running in minutes
 ---
 
-## Get started in three steps
+This quickstart guide will help you clone, configure, and run the DriveX Backend API locally. You'll make your first API call in under 5 minutes.
 
-Get your documentation site running locally and make your first customization.
+## Prerequisites
 
-### Step 1: Set up your local environment
+Before you begin, ensure you have the following installed:
 
-<AccordionGroup>
-  <Accordion icon="copy" title="Clone your docs locally">
-    During the onboarding process, you created a GitHub repository with your docs content if you didn't already have one. You can find a link to this repository in your [dashboard](https://dashboard.mintlify.com).
-    
-    To clone the repository locally so that you can make and preview changes to your docs, follow the [Cloning a repository](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository) guide in the GitHub docs.
-  </Accordion>
-  <Accordion icon="rectangle-terminal" title="Start the preview server">
-    1. Install the Mintlify CLI: `npm i -g mint`
-    2. Navigate to your docs directory and run: `mint dev`
-    3. Open `http://localhost:3000` to see your docs live!
-    
-    <Tip>Your preview updates automatically as you edit files.</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 2: Deploy your changes
-
-<AccordionGroup>
-  <Accordion icon="github" title="Install our GitHub app">
-    Install the Mintlify GitHub app from your [dashboard](https://dashboard.mintlify.com/settings/organization/github-app).
-    
-    Our GitHub app automatically deploys your changes to your docs site, so you don't need to manage deployments yourself.
-</Accordion>
-<Accordion icon="palette" title="Update your site name and colors">
-    For a first change, let's update the name and colors of your docs site.
-
-    1. Open `docs.json` in your editor.
-    2. Change the `"name"` field to your project name.
-    3. Update the `"colors"` to match your brand.
-    4. Save and see your changes instantly at `http://localhost:3000`.
-
-    <Tip>Try changing the primary color to see an immediate difference!</Tip>
-  </Accordion>
-</AccordionGroup>
-
-### Step 3: Go live
-
-<Accordion icon="rocket" title="Publish your docs">
-  1. Commit and push your changes.
-  2. Your docs will update and be live in moments!
-</Accordion>
-
-## Next steps
-
-Now that you have your docs running, explore these key features:
-
-<CardGroup cols={2}>
-
-<Card title="Write Content" icon="pen-to-square" href="/essentials/markdown">
-  Learn MDX syntax and start writing your documentation.
-</Card>
-
-<Card title="Customize style" icon="palette" href="/essentials/settings">
-  Make your docs match your brand perfectly.
-</Card>
-
-<Card title="Add code examples" icon="square-code" href="/essentials/code">
-  Include syntax-highlighted code blocks.
-</Card>
-
-<Card title="API documentation" icon="code" href="/api-reference/introduction">
-  Auto-generate API docs from OpenAPI specs.
-</Card>
-
-</CardGroup>
+- **Java 17** or higher ([Download OpenJDK](https://adoptium.net/))
+- **Maven 3.9+** ([Download Maven](https://maven.apache.org/download.cgi))
+- **MySQL** database server running locally or accessible remotely
+- **Git** for cloning the repository
 
 <Note>
-  **Need help?** See our [full documentation](https://mintlify.com/docs) or join our [community](https://mintlify.com/community).
+  If you prefer using Docker, skip to the [Docker Setup](#docker-setup) section for a containerized deployment.
 </Note>
+
+## Quick Setup
+
+<Steps>
+  <Step title="Clone the Repository">
+    Clone the DriveX Backend repository from GitHub:
+
+    ```bash
+    git clone https://github.com/rofaba/drivex-backend.git
+    cd drivex-backend
+    ```
+  </Step>
+
+  <Step title="Configure Database Connection">
+    Create or edit the `src/main/resources/application.properties` file with your MySQL credentials:
+
+    ```properties
+    spring.application.name=DriveX-backend
+
+    # MySQL Database Configuration
+    spring.datasource.url=jdbc:mysql://localhost:3306/drivex
+    spring.datasource.username=your_username
+    spring.datasource.password=your_password
+    spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
+
+    # JPA/Hibernate Configuration
+    spring.jpa.hibernate.ddl-auto=update
+    spring.jpa.show-sql=true
+    spring.jpa.properties.hibernate.format_sql=true
+    spring.jpa.database-platform=org.hibernate.dialect.MySQLDialect
+
+    # Server Configuration
+    server.servlet.context-path=/api
+    server.port=8080
+    server.address=0.0.0.0
+    ```
+
+    <Warning>
+      Make sure your MySQL database `drivex` exists before starting the application. Create it with:
+      ```sql
+      CREATE DATABASE drivex CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+      ```
+    </Warning>
+  </Step>
+
+  <Step title="Install Dependencies">
+    Use Maven to download all required dependencies:
+
+    ```bash
+    mvn clean install
+    ```
+
+    This command will:
+    - Clean any previous build artifacts
+    - Download all dependencies defined in `pom.xml`
+    - Compile the project
+    - Run tests (if any)
+    - Package the application
+  </Step>
+
+  <Step title="Run the Application">
+    Start the Spring Boot application using Maven:
+
+    ```bash
+    mvn spring-boot:run
+    ```
+
+    Or run the JAR file directly:
+
+    ```bash
+    java -jar target/DriveX-0.0.1-SNAPSHOT.jar
+    ```
+
+    You should see output indicating the server is running:
+
+    ```
+    Started DriveXBackendApplication in 3.456 seconds (JVM running for 4.123)
+    ```
+  </Step>
+
+  <Step title="Verify the API is Running">
+    Test the API with a simple GET request to list all vehicles:
+
+    ```bash
+    curl http://localhost:8080/api/vehicles
+    ```
+
+    You should receive a JSON response (empty array if no vehicles exist yet):
+
+    ```json
+    []
+    ```
+  </Step>
+
+  <Step title="Make Your First API Call">
+    Create a new vehicle using a POST request:
+
+    ```bash
+    curl -X POST http://localhost:8080/api/vehicles \
+      -H "Content-Type: application/json" \
+      -d '{
+        "brand": "BMW",
+        "model": "X5",
+        "year": 2024,
+        "vehicleType": "SUV",
+        "pricePerDay": 150.00,
+        "available": true
+      }'
+    ```
+
+    The API will respond with the created vehicle including its auto-generated ID and reference:
+
+    ```json
+    {
+      "id": 1,
+      "brand": "BMW",
+      "model": "X5",
+      "year": 2024,
+      "reference": "BMW2024A1B2",
+      "vehicleType": "SUV",
+      "pricePerDay": 150.00,
+      "available": true
+    }
+    ```
+  </Step>
+</Steps>
+
+## Docker Setup
+
+For a containerized deployment, use the included Dockerfile:
+
+<Steps>
+  <Step title="Build the Docker Image">
+    Build the multi-stage Docker image:
+
+    ```bash
+    docker build -t drivex-backend .
+    ```
+
+    This uses the production-ready Dockerfile that:
+    - Builds the JAR using Maven in stage 1
+    - Creates a lightweight runtime image with Eclipse Temurin JDK 17
+  </Step>
+
+  <Step title="Run the Container">
+    Run the container with environment variables:
+
+    ```bash
+    docker run -d \
+      -p 8080:8080 \
+      -e SPRING_DATASOURCE_URL=jdbc:mysql://host.docker.internal:3306/drivex \
+      -e SPRING_DATASOURCE_USERNAME=your_username \
+      -e SPRING_DATASOURCE_PASSWORD=your_password \
+      --name drivex-api \
+      drivex-backend
+    ```
+
+    <Note>
+      Use `host.docker.internal` to connect to MySQL running on your host machine from within the container.
+    </Note>
+  </Step>
+
+  <Step title="Verify Container is Running">
+    Check the container logs:
+
+    ```bash
+    docker logs -f drivex-api
+    ```
+
+    Test the API:
+
+    ```bash
+    curl http://localhost:8080/api/vehicles
+    ```
+  </Step>
+</Steps>
+
+## Development Mode
+
+For active development with hot reload, the project includes Spring Boot DevTools:
+
+```bash
+# Run in development mode with auto-restart
+mvn spring-boot:run
+```
+
+DevTools automatically restarts the application when you modify:
+- Java classes
+- Property files
+- Static resources
+
+<Note>
+  DevTools is only active when running the application from the classpath (via `mvn spring-boot:run`), not when running a packaged JAR.
+</Note>
+
+## Testing the API
+
+Here are some common API endpoints to test:
+
+<CodeGroup>
+
+```bash Get All Vehicles
+curl http://localhost:8080/api/vehicles
+```
+
+```bash Get Vehicle by ID
+curl http://localhost:8080/api/vehicles/1
+```
+
+```bash Search by Brand
+curl "http://localhost:8080/api/vehicles?marca=BMW"
+```
+
+```bash Search Vehicles
+curl "http://localhost:8080/api/vehicles/search?q=BMW"
+```
+
+```bash Filter Vehicles
+curl "http://localhost:8080/api/vehicles/filter?brand=BMW&year=2024&vehicleType=SUV"
+```
+
+```bash Get Available Brands
+curl http://localhost:8080/api/vehicles/brands
+```
+
+</CodeGroup>
+
+## Next Steps
+
+<CardGroup cols={2}>
+  <Card title="Installation Guide" icon="download" href="/installation">
+    Detailed setup for production environments
+  </Card>
+  <Card title="API Reference" icon="code" href="/api/auth/login">
+    Complete API endpoint documentation
+  </Card>
+</CardGroup>
+
+## Troubleshooting
+
+<AccordionGroup>
+  <Accordion title="Port 8080 already in use">
+    Change the port in `application.properties`:
+    ```properties
+    server.port=8081
+    ```
+    Or set the PORT environment variable:
+    ```bash
+    PORT=8081 mvn spring-boot:run
+    ```
+  </Accordion>
+
+  <Accordion title="Cannot connect to MySQL">
+    Verify:
+    1. MySQL server is running: `mysql -u root -p`
+    2. Database exists: `SHOW DATABASES;`
+    3. User has permissions: `GRANT ALL PRIVILEGES ON drivex.* TO 'your_username'@'localhost';`
+    4. Connection URL is correct in `application.properties`
+  </Accordion>
+
+  <Accordion title="Maven build fails">
+    Clear Maven cache and rebuild:
+    ```bash
+    mvn clean install -U
+    ```
+    Ensure Java 17 is installed:
+    ```bash
+    java -version
+    ```
+  </Accordion>
+
+  <Accordion title="404 on all endpoints">
+    Remember that all endpoints are prefixed with `/api` due to the context path configuration. Use:
+    ```
+    http://localhost:8080/api/vehicles
+    ```
+    Not:
+    ```
+    http://localhost:8080/vehicles
+    ```
+  </Accordion>
+</AccordionGroup>

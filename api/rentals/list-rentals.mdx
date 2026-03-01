@@ -1,0 +1,105 @@
+---
+title: "List Rentals"
+api: "GET /api/rentals"
+---
+
+Retrieves a list of rentals filtered by user or vehicle. At least one filter parameter must be provided.
+
+<Note>
+If no query parameters are provided, the endpoint returns an empty list.
+</Note>
+
+## Query Parameters
+
+<ParamField query="userId" type="long">
+  Filter rentals by user ID. Returns all rentals for the specified user.
+</ParamField>
+
+<ParamField query="vehicleId" type="long">
+  Filter rentals by vehicle ID. Returns all rentals for the specified vehicle.
+</ParamField>
+
+## Response
+
+Returns an array of rental objects.
+
+<ResponseField name="id" type="long">
+  Unique identifier for the rental
+</ResponseField>
+
+<ResponseField name="userId" type="long">
+  The ID of the user who made the reservation
+</ResponseField>
+
+<ResponseField name="vehicleId" type="long">
+  The ID of the rented vehicle
+</ResponseField>
+
+<ResponseField name="startDate" type="string">
+  Rental start date in ISO 8601 format
+</ResponseField>
+
+<ResponseField name="endDate" type="string">
+  Rental end date in ISO 8601 format
+</ResponseField>
+
+<ResponseField name="price" type="decimal">
+  Total rental price
+</ResponseField>
+
+<ResponseField name="status" type="string">
+  Current rental status: `RESERVED`, `ACTIVE`, `COMPLETED`, or `CANCELLED`
+</ResponseField>
+
+<ResponseField name="createdAt" type="string">
+  Timestamp when the rental was created (ISO 8601)
+</ResponseField>
+
+<ResponseField name="updatedAt" type="string">
+  Timestamp when the rental was last updated (ISO 8601)
+</ResponseField>
+
+<RequestExample>
+```bash Filter by User
+curl -X GET "https://api.drivex.com/api/rentals?userId=123" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+```bash Filter by Vehicle
+curl -X GET "https://api.drivex.com/api/rentals?vehicleId=456" \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+</RequestExample>
+
+<ResponseExample>
+```json 200 OK
+[
+  {
+    "id": 789,
+    "userId": 123,
+    "vehicleId": 456,
+    "startDate": "2026-03-15",
+    "endDate": "2026-03-20",
+    "price": 450.00,
+    "status": "RESERVED",
+    "createdAt": "2026-03-01T10:30:00Z",
+    "updatedAt": "2026-03-01T10:30:00Z"
+  },
+  {
+    "id": 790,
+    "userId": 123,
+    "vehicleId": 457,
+    "startDate": "2026-04-01",
+    "endDate": "2026-04-05",
+    "price": 380.00,
+    "status": "COMPLETED",
+    "createdAt": "2026-02-20T14:15:00Z",
+    "updatedAt": "2026-04-05T18:00:00Z"
+  }
+]
+```
+
+```json 200 No Results
+[]
+```
+</ResponseExample>

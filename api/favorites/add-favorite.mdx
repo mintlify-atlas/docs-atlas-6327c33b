@@ -1,0 +1,41 @@
+---
+title: "Add Favorite"
+api: "POST /api/favourites/{userId}/{vehicleId}"
+description: "Add a vehicle to a user's favorites list"
+---
+
+This endpoint adds a specific vehicle to a user's favorites list. If the vehicle is already in the user's favorites, the request is idempotent and no duplicate is created.
+
+<ParamField path="userId" type="long" required>
+  The unique identifier of the user
+</ParamField>
+
+<ParamField path="vehicleId" type="long" required>
+  The unique identifier of the vehicle to add to favorites
+</ParamField>
+
+### Response
+
+Returns no content (void) on success. The endpoint is idempotent - adding an already favorited vehicle will not create a duplicate.
+
+### Behavior
+
+- If the favorite already exists, the request succeeds without modification
+- If the user or vehicle does not exist, an error is thrown
+- Creates a new favorite relationship between the user and vehicle
+
+<RequestExample>
+
+```bash cURL
+curl -X POST https://api.drivex.com/api/favourites/123/456
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```text Response
+200 OK
+```
+
+</ResponseExample>

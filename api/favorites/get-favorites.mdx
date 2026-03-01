@@ -1,0 +1,82 @@
+---
+title: "Get Favorites"
+api: "GET /api/favourites/{userId}"
+description: "Retrieve all favorite vehicles for a specific user"
+---
+
+This endpoint returns a list of all vehicles that a user has marked as favorites.
+
+<ParamField path="userId" type="long" required>
+  The unique identifier of the user
+</ParamField>
+
+### Response
+
+Returns an array of Vehicle objects. Each vehicle contains full vehicle details.
+
+<ResponseField name="array" type="Vehicle[]">
+  Array of favorite vehicles for the specified user
+  
+  <ResponseField name="id" type="long">
+    Unique identifier of the vehicle
+  </ResponseField>
+  
+  <ResponseField name="make" type="string">
+    Vehicle manufacturer
+  </ResponseField>
+  
+  <ResponseField name="model" type="string">
+    Vehicle model name
+  </ResponseField>
+  
+  <ResponseField name="year" type="integer">
+    Vehicle year
+  </ResponseField>
+  
+  <ResponseField name="price" type="double">
+    Daily rental price
+  </ResponseField>
+  
+  <ResponseField name="type" type="string">
+    Vehicle type (e.g., SUV, Sedan, Truck)
+  </ResponseField>
+  
+  <ResponseField name="availability" type="boolean">
+    Whether the vehicle is currently available for rent
+  </ResponseField>
+</ResponseField>
+
+<RequestExample>
+
+```bash cURL
+curl -X GET https://api.drivex.com/api/favourites/123
+```
+
+</RequestExample>
+
+<ResponseExample>
+
+```json Response
+[
+  {
+    "id": 456,
+    "make": "Tesla",
+    "model": "Model 3",
+    "year": 2024,
+    "price": 89.99,
+    "type": "Sedan",
+    "availability": true
+  },
+  {
+    "id": 789,
+    "make": "Ford",
+    "model": "Mustang",
+    "year": 2023,
+    "price": 129.99,
+    "type": "Sports Car",
+    "availability": false
+  }
+]
+```
+
+</ResponseExample>

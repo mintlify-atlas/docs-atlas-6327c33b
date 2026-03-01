@@ -1,0 +1,153 @@
+---
+title: DriveX Backend API
+description: A comprehensive RESTful API built with Spring Boot for managing vehicle rentals, user authentication, and fleet operations
+---
+
+<Note>
+  DriveX Backend is powered by **Spring Boot 4.0.0** and **Java 17**, providing a robust and scalable solution for vehicle rental management.
+</Note>
+
+## Welcome to DriveX Backend
+
+DriveX Backend is a production-ready Spring Boot application that provides a complete API for vehicle rental management. Built with modern Java technologies, it offers secure authentication, comprehensive vehicle management, and rental transaction processing.
+
+### Key Features
+
+- **Vehicle Management**: Complete CRUD operations for vehicles with advanced filtering, search, and brand management
+- **User Authentication**: Secure user registration and login with Spring Security
+- **Rental System**: Full rental lifecycle management with booking and tracking capabilities
+- **Favorites**: Allow users to save and manage their favorite vehicles
+- **Image Handling**: Vehicle image upload and management system
+- **MySQL Integration**: Persistent data storage with JPA/Hibernate
+- **Docker Support**: Containerized deployment with multi-stage builds
+
+### Technology Stack
+
+<CardGroup cols={2}>
+  <Card title="Spring Boot" icon="leaf">
+    Version 4.0.0 with Spring WebMVC and Spring Data JPA
+  </Card>
+  <Card title="Java 17" icon="coffee">
+    Modern Java LTS version with enhanced performance
+  </Card>
+  <Card title="MySQL" icon="database">
+    Relational database with Hibernate ORM
+  </Card>
+  <Card title="Maven" icon="box">
+    Dependency management and build automation
+  </Card>
+</CardGroup>
+
+## Get Started
+
+<CardGroup cols={2}>
+  <Card
+    title="Quickstart"
+    icon="rocket"
+    href="/quickstart"
+  >
+    Get your DriveX Backend API running in minutes
+  </Card>
+  <Card
+    title="Installation Guide"
+    icon="download"
+    href="/installation"
+  >
+    Detailed setup instructions for development and production
+  </Card>
+  <Card
+    title="API Reference"
+    icon="code"
+    href="/api/auth/login"
+  >
+    Explore all available endpoints and their usage
+  </Card>
+  <Card
+    title="GitHub Repository"
+    icon="github"
+    href="https://github.com/rofaba/drivex-backend"
+  >
+    View source code and contribute to the project
+  </Card>
+</CardGroup>
+
+## API Architecture
+
+The DriveX Backend API is organized around REST principles with the following resource endpoints:
+
+- **`/api/vehicles`** - Vehicle catalog management and search
+- **`/api/auth`** - User authentication and registration
+- **`/api/users`** - User profile management
+- **`/api/rentals`** - Rental transactions and bookings
+- **`/api/favorites`** - User favorite vehicles
+- **`/api/vehicle-images`** - Vehicle image uploads and management
+
+<Note>
+  All API endpoints are prefixed with `/api` as configured in the application context path.
+</Note>
+
+## Core Dependencies
+
+The application leverages these key Spring Boot starters:
+
+```xml
+<!-- Spring Boot Web MVC -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-webmvc</artifactId>
+</dependency>
+
+<!-- Spring Data JPA -->
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-data-jpa</artifactId>
+</dependency>
+
+<!-- MySQL Connector -->
+<dependency>
+    <groupId>com.mysql</groupId>
+    <artifactId>mysql-connector-j</artifactId>
+</dependency>
+
+<!-- Spring Security Crypto -->
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-crypto</artifactId>
+</dependency>
+```
+
+## Quick Example
+
+Here's a simple example of fetching all vehicles:
+
+```bash
+curl http://localhost:8080/api/vehicles
+```
+
+```json
+[
+  {
+    "id": 1,
+    "brand": "BMW",
+    "model": "X5",
+    "year": 2024,
+    "reference": "BMW2024A1B2",
+    "vehicleType": "SUV",
+    "pricePerDay": 150.00
+  }
+]
+```
+
+## Next Steps
+
+<Steps>
+  <Step title="Read the Quickstart">
+    Follow our [quickstart guide](/quickstart) to get the API running locally in under 5 minutes.
+  </Step>
+  <Step title="Explore the API">
+    Check out the [API reference](/api/auth/login) to see all available endpoints and request/response formats.
+  </Step>
+  <Step title="Deploy to Production">
+    Use our Docker configuration for containerized deployment to any cloud platform.
+  </Step>
+</Steps>

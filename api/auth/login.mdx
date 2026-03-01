@@ -1,0 +1,122 @@
+---
+title: 'Login'
+description: 'Authenticate a user with email and password'
+---
+
+# Login
+
+Authenticates a user by validating their email and password credentials. Returns the user object on successful authentication.
+
+## Endpoint
+
+```
+POST /auth/login
+```
+
+## Request Body
+
+<ParamField body="email" type="string" required>
+  The user's email address
+</ParamField>
+
+<ParamField body="password" type="string" required>
+  The user's password in plain text
+</ParamField>
+
+## Response
+
+### Success Response (200 OK)
+
+Returns the authenticated user object.
+
+<ResponseField name="id" type="long">
+  Unique identifier for the user
+</ResponseField>
+
+<ResponseField name="username" type="string">
+  The user's username
+</ResponseField>
+
+<ResponseField name="email" type="string">
+  The user's email address
+</ResponseField>
+
+<ResponseField name="password_hash" type="string">
+  The hashed password (BCrypt)
+</ResponseField>
+
+<ResponseField name="firstname" type="string">
+  The user's first name
+</ResponseField>
+
+<ResponseField name="lastname" type="string">
+  The user's last name
+</ResponseField>
+
+<ResponseField name="phone_number" type="string">
+  The user's phone number
+</ResponseField>
+
+<ResponseField name="role" type="string">
+  The user's role in the system
+</ResponseField>
+
+<ResponseField name="is_active" type="boolean">
+  Whether the user account is active
+</ResponseField>
+
+<ResponseField name="created_at" type="timestamp">
+  When the user account was created
+</ResponseField>
+
+<ResponseField name="updated_at" type="timestamp">
+  When the user account was last updated
+</ResponseField>
+
+<ResponseField name="profileImage" type="string">
+  URL or path to the user's profile image
+</ResponseField>
+
+### Error Responses
+
+#### 401 Unauthorized
+
+Returned when the email does not exist or the password is incorrect. No response body is returned.
+
+## Example
+
+### Request
+
+```bash
+curl -X POST https://api.drivex.com/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
+    "email": "user@example.com",
+    "password": "mySecurePassword123"
+  }'
+```
+
+### Response (200 OK)
+
+```json
+{
+  "id": 1,
+  "username": "johndoe",
+  "email": "user@example.com",
+  "password_hash": "$2a$10$abcdefghijklmnopqrstuv",
+  "firstname": "John",
+  "lastname": "Doe",
+  "phone_number": "+1234567890",
+  "role": "user",
+  "is_active": true,
+  "created_at": "2026-01-15T10:30:00Z",
+  "updated_at": "2026-02-20T14:45:00Z",
+  "profileImage": "/images/profiles/user1.jpg"
+}
+```
+
+### Response (401 Unauthorized)
+
+```
+No body returned
+```

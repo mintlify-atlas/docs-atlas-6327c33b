@@ -1,0 +1,29 @@
+---
+title: "Delete Vehicle"
+api: "DELETE /api/vehicles/{id}"
+description: "Delete a vehicle from the system"
+---
+
+Permanently deletes a vehicle by its ID. Returns 204 No Content on success.
+
+## Path Parameters
+
+<ParamField path="id" type="long" required>
+  The unique identifier of the vehicle to delete
+</ParamField>
+
+## Response
+
+Returns 204 No Content on successful deletion.
+
+<RequestExample>
+```bash cURL
+curl -X DELETE "http://localhost:8080/api/vehicles/1"
+```
+</RequestExample>
+
+<ResponseExample>
+```text 204 - No Content
+
+```
+</ResponseExample>
